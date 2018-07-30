@@ -1,0 +1,34 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "*:*": {
+        "$(0,2)": "&(1,1)",
+        "publishers": {
+          "*": { "name": "publishers[]" }
+        },
+        "identifiers": {
+          "lccn": { "0": "lccn" },
+          "isbn_10": { "0": "isbn_10" },
+          "librarything": { "0": "libraryThingId" },
+          "goodreads": { "0": "goodreadsId" }
+        },
+        "subtitle": "subtitle",
+        "title": "title",
+        "url": "openlibUrl",
+        "notes": "openlibNotes",
+        "number_of_pages": "numPages",
+        "cover": {
+          "large": "coverImgUrl"
+        },
+        "subjects": {
+          "*": { "name": "subjectNames[]" }
+        },
+        "publish_date": "publishDate",
+        "authors": {
+          "*": { "name": "authors[]" }
+        }
+      }
+    }
+  }
+]

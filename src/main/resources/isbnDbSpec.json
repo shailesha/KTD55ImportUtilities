@@ -1,0 +1,22 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "book": {
+        "publisher": "publisher",
+        "isbn": "isbn_10",
+        "title": "subtitle",
+        "title_long": "title",
+        "pages": "numPages",
+        "image": "coverImgUrl",
+        "subjects": "subjectNames",
+        "publish_date": "publishDate",
+        "authors": "authors",
+        "overview": "Overview",
+        "isbn13": "isbn",
+        "edition": "edition"
+      }
+    }
+  }
+
+]
