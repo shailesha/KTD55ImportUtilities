@@ -1,5 +1,7 @@
 package com.avider.bks.utils;
 
+import java.util.Arrays;
+
 /**
  * Created by ruchiagarwal on 7/24/18.
  */
@@ -19,7 +21,7 @@ public class Isbn13Isbn10Converter {
             weightedSum = weightedSum + isbn13Ints[i]*j;
 
 
-            
+
         }
 
         int mod11 = weightedSum % 11;
