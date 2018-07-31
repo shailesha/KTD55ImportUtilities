@@ -14,7 +14,11 @@
         "authors": "authors",
         "overview": "Overview",
         "isbn13": "isbn",
-        "edition": "edition"
+        "edition": "edition",
+        "dewey_decimal":"dewey_decimal",
+        "excerpt":"excerpt",
+        "synopsys":"synopsys",
+        "reviews":"reviews"
       }
     }
   }

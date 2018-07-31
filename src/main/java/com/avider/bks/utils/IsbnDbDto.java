@@ -43,6 +43,18 @@ public class IsbnDbDto {
     @JsonProperty("numPages")
     private int numPages;
 
+    @JsonProperty("dewey_decimal")
+    private String deweyDecimal;
+
+    @JsonProperty("excerpt")
+    private String excerpt;
+
+    @JsonProperty("synopsys")
+    private String synopsys;
+
+    @JsonProperty("reviews")
+    private String[] reviews;
+
 
     public String getPublisher() {
         return publisher;

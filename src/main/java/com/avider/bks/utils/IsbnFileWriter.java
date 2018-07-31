@@ -20,7 +20,7 @@ public class IsbnFileWriter {
             file = new File(outputFilePath);
             writer = new FileWriter(file,true);
             writer.append("\n\n\n\n\n\n-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
-            writer.append("isbn,isbn_10, title, subtitle,edition, Authors, Publishers, Overview, Notes, Publish Date,subjects, Num Pages, cover image, Openlib URL, good reads id, Lccn, library thing id\n");
+            writer.append("isbn13,isbn_10, title, subtitle,edition, Dewey_decimal, Authors, Publishers, Overview,Synopsys, excerpt, Notes, Publish Date,subjects, Num Pages,Reviews, cover image, Openlib URL, good reads id, Lccn, library thing id\n");
         } catch(IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -36,21 +36,25 @@ public class IsbnFileWriter {
 
     }
 
-    public void writeIsbnData(ConsolidatedBookDataDto isdnDataDto) {
+    public void writeIsbnData(IsbnDataDto isdnDataDto) {
         try {
-            System.out.println("isbn = " + isdnDataDto.getIsbn());
-            writer.append(isdnDataDto.getIsbn() + ",");
+            System.out.println("isbn = " + isdnDataDto.getIsbn13());
+            writer.append(isdnDataDto.getIsbn13() + ",");
             writer.append(isdnDataDto.getIsbn_10() + ",");
             writer.append(escapeSpecialCharacters(isdnDataDto.getTitle()) + ",");
             writer.append(escapeSpecialCharacters(isdnDataDto.getSubtitle()) + ",");
             writer.append(escapeSpecialCharacters(isdnDataDto.getEdition()) + ",");
+            writer.append(escapeSpecialCharacters(isdnDataDto.getDeweyDecimal()) + ",");
             writer.append(escapeSpecialCharacters(convertListToString(isdnDataDto.getAuthors()) )+ ",");
-            writer.append(escapeSpecialCharacters(convertListToString(isdnDataDto.getPublishers()) )+ ",");
+            writer.append(escapeSpecialCharacters(isdnDataDto.getPublishers() )+ ",");
             writer.append(escapeSpecialCharacters(isdnDataDto.getOverview()) + ",");
+            writer.append(escapeSpecialCharacters(isdnDataDto.getSynopsys()) + ",");
+            writer.append(escapeSpecialCharacters(isdnDataDto.getExcerpt()) + ",");
             writer.append(escapeSpecialCharacters(isdnDataDto.getOpenlibNotes()) + ",");
             writer.append(isdnDataDto.getPublishDate() + ",");
             writer.append(escapeSpecialCharacters(convertListToString(isdnDataDto.getSubjectNames())) + ",");
             writer.append(isdnDataDto.getNumPages() + ",");
+            writer.append(escapeSpecialCharacters(convertListToString(isdnDataDto.getReviews()) )+ ",");
             writer.append(isdnDataDto.getCoverImgUrl() + ",");
             writer.append(isdnDataDto.getOpenlibUrl() + ",");
             writer.append(isdnDataDto.getGoodreadsId() + ",");

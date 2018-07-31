@@ -5,7 +5,7 @@
       "*:*": {
         "$(0,2)": "&(1,1)",
         "publishers": {
-          "*": { "name": "publishers[]" }
+          "*": { "name": "publishers" }
         },
         "identifiers": {
           "lccn": { "0": "lccn" },

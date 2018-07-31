@@ -12,10 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -24,11 +21,13 @@ import java.util.Set;
 public class BookDataExternalAdaptor {
     private static final String openLibUrl = "https://openlibrary.org/api/books?bibkeys=ISBN:" ;
     private static final String isbnDbUrl = "https://api.isbndb.com/book/" ;
+    private Map<String,IsbnDataDto> isbnDataMap = new HashMap(1000);
 
-    public static String getIsbnDbData(String isbn) {
+    public  IsbnDataDto getIsbnDbData(String isbn) {
         HashMap<String, String> returnMap = new HashMap<String, String>();
 
         String isbnDbResult = null;
+        IsbnDataDto isbnDataDto = null;
         try {
 
             CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -38,19 +37,45 @@ public class BookDataExternalAdaptor {
             CloseableHttpResponse response1 = httpclient.execute(httpGet);
             isbnDbResult = EntityUtils.toString(response1.getEntity());
 
+            System.out.println("isbnDbResult : " + isbnDbResult);
+            //if there wasa valid result
+            if(isbnDbResult.length() >50) {
+                List chainrSpecJSON = JsonUtils.classpathToList("/isbnDbSpec.json");
+                Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
+
+                Object inputJSON = JsonUtils.jsonToObject(isbnDbResult);
+
+                Object transformedOutput = chainr.transform(inputJSON);
+
+                System.out.println(JsonUtils.toJsonString(transformedOutput));
+
+                JsonFactory factory = new JsonFactory();
+                JsonParser parser = factory.createParser(JsonUtils.toJsonString(transformedOutput));
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                isbnDataDto = mapper.readValue(parser, IsbnDataDto.class);
+            }
+
+//System.out.println(openLibDataDto.getIsbn());
+
+
+
         } catch(Exception ex) {
             throw new RuntimeException(ex);
 
         }
 
-        return isbnDbResult;
+        return isbnDataDto;
 
     }
-    public static OpenLibDataDto getOpenLibData(String isbn) {
+    public  IsbnDataDto getOpenLibData(String isbn) {
         HashMap<String, String> returnMap = new HashMap<String, String>();
 
-        String openLibResult = null;
-        OpenLibDataDto openLibDataDto = null;
+        //String openLibResult = null;
+        IsbnDataDto openLibDataDto = null;
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(openLibUrl+isbn+"&format=json&jscmd=data");
@@ -67,26 +92,31 @@ public class BookDataExternalAdaptor {
                 result = EntityUtils.toString(response1.getEntity());
             }
 
+            System.out.println("openlib result : " + result);
            // ObjectMapper mapper = new ObjectMapper()
              //       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            List chainrSpecJSON = JsonUtils.classpathToList("/openLibSpec.json");
-            Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
+            if(result.length() >50) {
 
-            Object inputJSON = JsonUtils.jsonToObject(result);
+                List chainrSpecJSON = JsonUtils.classpathToList("/openLibSpec.json");
 
-            Object transformedOutput = chainr.transform( inputJSON );
+                Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
 
-System.out.println(JsonUtils.toJsonString(transformedOutput));
+                Object inputJSON = JsonUtils.jsonToObject(result);
 
-            JsonFactory factory = new JsonFactory();
-            JsonParser  parser  = factory.createParser(JsonUtils.toJsonString(transformedOutput));
+                Object transformedOutput = chainr.transform(inputJSON);
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+                System.out.println(JsonUtils.toJsonString(transformedOutput));
 
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            openLibDataDto = mapper.readValue(parser, OpenLibDataDto.class);
+                JsonFactory factory = new JsonFactory();
+                JsonParser parser = factory.createParser(JsonUtils.toJsonString(transformedOutput));
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                openLibDataDto = mapper.readValue(parser, IsbnDataDto.class);
+            }
 
 //System.out.println(openLibDataDto.getIsbn());
 
@@ -102,13 +132,44 @@ System.out.println(JsonUtils.toJsonString(transformedOutput));
 
 
     }
-    public static String getConsolidatedData(String isbn) {
+    public IsbnDataDto getConsolidatedData(String isbn13) {
         HashMap<String, String> returnMap = new HashMap<String, String>();
-        OpenLibDataDto openLibResult = getOpenLibData(isbn);
-        String isbnDbResult = getIsbnDbData(isbn);
+        IsbnDataDto consolidatedIsbnDataDto = null;
+        if(isbnDataMap.get(isbn13) == null){
+            IsbnDataDto isbnDataDto = getIsbnDbData(isbn13);
+
+            IsbnDataDto openLibIsbnData = getOpenLibData(isbn13);
+            if(isbnDataDto !=null && openLibIsbnData != null) {
+                consolidatedIsbnDataDto = isbnDataDto;
+                consolidatedIsbnDataDto.setGoodreadsId(openLibIsbnData.getGoodreadsId());
+                consolidatedIsbnDataDto.setLccn(openLibIsbnData.getLccn());
+                consolidatedIsbnDataDto.setLibraryThingId(openLibIsbnData.getLibraryThingId());
+                consolidatedIsbnDataDto.setIsbn_10(openLibIsbnData.getIsbn_10());
+                consolidatedIsbnDataDto.setOpenlibUrl(openLibIsbnData.getOpenlibUrl());
+                consolidatedIsbnDataDto.setOpenlibNotes(openLibIsbnData.getOpenlibNotes());
+
+            } else if(isbnDataDto ==null && openLibIsbnData == null) {
+                // do nothing
+                consolidatedIsbnDataDto = new IsbnDataDto();// empty object
+
+                System.out.println("data not found in isbn db for " + isbn13);
+            } else if(isbnDataDto == null ) {
+                consolidatedIsbnDataDto = openLibIsbnData;
+                System.out.println("data not found in isbn db for " + isbn13);
+            } else if(openLibIsbnData == null) {
+                consolidatedIsbnDataDto = isbnDataDto;
+            }
+            if(consolidatedIsbnDataDto != null) {
+                consolidatedIsbnDataDto.setIsbn13(isbn13);
+            }
+        } else {
+            consolidatedIsbnDataDto = isbnDataMap.get(isbn13);
+        }
 
 
-        return isbnDbResult;
+
+
+        return consolidatedIsbnDataDto;
 
 
 
@@ -126,28 +187,33 @@ System.out.println(JsonUtils.toJsonString(transformedOutput));
     public static void main(String[] args) {
         //String isbn = "9201558025";
         //file format assumed to be Title	Title ID	ISBN	Booknumber	Category	Location	Author	Shelf Location	Times Rented	Status	Language
-        String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
+        //String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
 
-        String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
+        //String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
 
+        String isbnListFilePath = "/home/shailesh/avidreaders/catalog_report_for_migration.csv";
+
+        String outputFilePath = "/home/shailesh/avidreaders/IsbnData.csv";
+
+        BookDataExternalAdaptor bookDataExternalAdaptor = new BookDataExternalAdaptor();
         IsbnListRetriever isbnListRetriever = new IsbnListRetriever();
         Set<String> isbnSet = isbnListRetriever.retrieveIsbnsInLibrary(isbnListFilePath);
         IsbnFileWriter isbnFileWriter = new IsbnFileWriter();
         isbnFileWriter.initialize(outputFilePath);
         Iterator<String> iter = isbnSet.iterator();
 int i=0;
-        while(iter.hasNext() && i <= 50) {
+        while(iter.hasNext() && i <= 1) {
 
 i++;
-            String isbn = iter.next();
-            OpenLibDataDto openLibData = BookDataExternalAdaptor.getOpenLibData(isbn);
+            String isbn13 = iter.next();
+            IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(isbn13);
 
-            if (openLibData != null) {
+            if (isbnDataDto.getIsbn13() != null) {
                 //System.out.println("writing valid isbn data in file" + openLibData.getIsbn());
-                //isbnFileWriter.writeIsbnData(openLibData);
+                isbnFileWriter.writeIsbnData(isbnDataDto);
             } else {
                 //System.out.println("writing missing data in file" + isbn);
-                isbnFileWriter.writeMissingData(isbn);
+                isbnFileWriter.writeMissingData(isbn13);
             }
         }
         isbnFileWriter.closeWriting();
