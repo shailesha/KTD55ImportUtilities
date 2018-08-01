@@ -138,6 +138,7 @@ public class BookDataExternalAdaptor {
 
         IsbnDataDto consolidatedIsbnDataDto = new IsbnDataDto();
 
+        System.out.println(importBookDataDto.getIsbn13());
 
         if(importBookDataDto.getIsbn13() != 0) {  // if the book has an isbn
 
@@ -189,6 +190,7 @@ public class BookDataExternalAdaptor {
         consolidatedIsbnDataDto.setCategory(importBookDataDto.getCategory());
 
         consolidatedIsbnDataDto.setAuthorsFromImport(importBookDataDto.getAuthors());
+        consolidatedIsbnDataDto.setTimesRented(importBookDataDto.getTimesRented());
         consolidatedIsbnDataDto.setLibLocation(importBookDataDto.getLibLocation());
         consolidatedIsbnDataDto.setShelfLocation(importBookDataDto.getLocation());
         consolidatedIsbnDataDto.setStatus(importBookDataDto.getStatus());
@@ -215,13 +217,13 @@ public class BookDataExternalAdaptor {
     public static void main(String[] args) {
         //String isbn = "9201558025";
         //file format assumed to be Title	Title ID	ISBN	Booknumber	Category	Location	Author	Shelf Location	Times Rented	Status	Language
-        String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
+       // String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
 
-        String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
+//        String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
 
-        //String isbnListFilePath = "/home/shailesh/avidreaders/catalog_report_for_migration.csv";
+        String isbnListFilePath = "/home/shailesh/avidreader/catalog_report_for_migration.csv";
 
-//        String outputFilePath = "/home/shailesh/avidreaders/IsbnData.csv";
+        String outputFilePath = "/home/shailesh/avidreader/IsbnData.csv";
 
         BookDataExternalAdaptor bookDataExternalAdaptor = new BookDataExternalAdaptor();
         BookListRetriever isbnListRetriever = new BookListRetriever();

@@ -34,12 +34,13 @@ public class BookListRetriever {
             fileReader.readLine();
             fileReader.readLine();
             while ((recievedLine = fileReader.readLine()) != null) {
-
+                //System.out.println(recievedLine);
                 line = Isbn13Isbn10Converter.getEscapedCsvLine(recievedLine);
-                System.out.println(line);
+                //System.out.println(line);
                 String[] bookContentLine = line.split(",");
 
                 if(bookContentLine.length > 5) {
+                  //  System.out.println(bookContentLine[0] + ":" + bookContentLine[1] + ":" + bookContentLine[3]);
                     ImportBookDataDto importBookDataDto = new ImportBookDataDto();
                     importBookDataDto.setBookNum(Long.parseLong(bookContentLine[3]));
                     if(bookContentLine[2] != null && !bookContentLine[2].equals("") && !bookContentLine[2].equals("NOISBN")) {
@@ -56,10 +57,11 @@ public class BookListRetriever {
                     if(bookContentLine.length >=11) {
                         importBookDataDto.setLanguage(bookContentLine[10]);
                     }
+
                     importBookDataDto.setLocation(bookContentLine[7]);
                     importBookDataDto.setTimesRented(Integer.parseInt(bookContentLine[8]));
                     importBookDataDto.setStatus(bookContentLine[9]);
-                    importBookDataDto.setLocation(bookContentLine[5]);
+                    importBookDataDto.setLibLocation(bookContentLine[5]);
 
                     isbnSet.add(importBookDataDto);
 

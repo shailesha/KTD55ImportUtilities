@@ -22,7 +22,7 @@ public class Isbn13Isbn10Converter {
             for (int i = 3, j = 10; i <= 11; i++, j--) {
                 isbn13Ints[i] = Integer.parseInt(String.valueOf(isbn13Chars[i]));
                 isbn10Ints[i - 3] = isbn13Ints[i];
-                System.out.println((i-3) + "index = " + isbn10Ints[i - 3]);
+                //System.out.println((i-3) + "index = " + isbn10Ints[i - 3]);
                 weightedSum = weightedSum + isbn13Ints[i] * j;
 
 
@@ -38,7 +38,7 @@ public class Isbn13Isbn10Converter {
             for (int i = 0; i < 10; i++) {
 
                 isbn10Chars[i] = String.valueOf(isbn10Ints[i]).charAt(0);
-                System.out.println((i) + "index = " + isbn10Chars[i]);
+                //System.out.println((i) + "index = " + isbn10Chars[i]);
 
             }
             String isbn10 = new String(isbn10Chars);
@@ -59,13 +59,13 @@ public class Isbn13Isbn10Converter {
     public static String prepareBookNumber(long recievedBookNum) {
         String toBeRetrunedBookNum = "B";
         if(recievedBookNum < 10000) {
-            toBeRetrunedBookNum = "000" + recievedBookNum;
+            toBeRetrunedBookNum = toBeRetrunedBookNum + "000" + recievedBookNum;
         } else if(recievedBookNum < 100000) {
-            toBeRetrunedBookNum = "00" + recievedBookNum;
+            toBeRetrunedBookNum = toBeRetrunedBookNum + "00" + recievedBookNum;
         } else if(recievedBookNum < 1000000) {
-            toBeRetrunedBookNum = "0" + recievedBookNum;
+            toBeRetrunedBookNum = toBeRetrunedBookNum + "0" + recievedBookNum;
         } else {
-            toBeRetrunedBookNum =  "" + recievedBookNum;
+            toBeRetrunedBookNum =  toBeRetrunedBookNum + recievedBookNum;
         }
         return toBeRetrunedBookNum;
 
@@ -83,7 +83,10 @@ public class Isbn13Isbn10Converter {
 
             //System.out.println(":"+data+":" + data.contains("\"") );
 
-            if (data.startsWith("\"") && !continuation) {
+            if (data.startsWith("\"") && data.endsWith("\"")) {
+                line = line + data + ",";
+                continuation = false;
+            } else if (data.startsWith("\"") && !continuation) {
 
 
                 line = line + data;
@@ -91,7 +94,7 @@ public class Isbn13Isbn10Converter {
             } else if (continuation) {
 
                 if (data.endsWith("\"")) {
-                    //System.out.println(data.charAt(0));
+                    //System.out.println(data.endsWith("\""));
                     line = line + ":::" + data + ",";
                     continuation = false;
                 } else {
@@ -109,8 +112,12 @@ public class Isbn13Isbn10Converter {
     public static String makeCsvLine(String[] stringsInSeq) {
         String csvLine = "";
         for(String data: stringsInSeq) {
-            csvLine = csvLine + "\"" + data.replaceAll(":::",",") + "\"" +  ","  ;
-            csvLine.replaceAll("\\r", "").replaceAll("\\n","");
+            if(data != null) {
+                csvLine = csvLine + "\"" + data.replaceAll(":::", ",") + "\"" + ",";
+                csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
+            } else {
+                csvLine = csvLine + "\"" +  "\"" + ",";
+            }
         }
         csvLine = csvLine + "\n";
         return csvLine;
