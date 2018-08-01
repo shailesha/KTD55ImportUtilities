@@ -23,7 +23,7 @@ public class BookDataExternalAdaptor {
     private static final String isbnDbUrl = "https://api.isbndb.com/book/" ;
     private Map<String,IsbnDataDto> isbnDataMap = new HashMap(1000);
 
-    public  IsbnDataDto getIsbnDbData(String isbn) {
+    public  IsbnDataDto getIsbnDbData(long isbn) {
         HashMap<String, String> returnMap = new HashMap<String, String>();
 
         String isbnDbResult = null;
@@ -71,7 +71,7 @@ public class BookDataExternalAdaptor {
         return isbnDataDto;
 
     }
-    public  IsbnDataDto getOpenLibData(String isbn) {
+    public  IsbnDataDto getOpenLibData(long isbn) {
         HashMap<String, String> returnMap = new HashMap<String, String>();
 
         //String openLibResult = null;
@@ -82,8 +82,8 @@ public class BookDataExternalAdaptor {
 
             CloseableHttpResponse response1 = httpclient.execute(httpGet);
             String result = EntityUtils.toString(response1.getEntity());
-            if(result.length()<10 && isbn.length()==13) {
-                String isbn10 = new Isbn13Isbn10Converter().convertFromIsbn13(isbn);
+            if(result.length()<10 && isbn > 999999999999L) {
+                String isbn10 = new Isbn13Isbn10Converter().convertFromIsbn13(String.valueOf(isbn));
                 //System.out.println("data not found for isbn13 = " + isbn + ". Retrieving for isbn10 = " + isbn10);
                 httpclient = HttpClients.createDefault();
                 httpGet = new HttpGet(openLibUrl+isbn10+"&format=json&jscmd=data");
@@ -132,39 +132,67 @@ public class BookDataExternalAdaptor {
 
 
     }
-    public IsbnDataDto getConsolidatedData(String isbn13) {
-        HashMap<String, String> returnMap = new HashMap<String, String>();
-        IsbnDataDto consolidatedIsbnDataDto = null;
-        if(isbnDataMap.get(isbn13) == null){
-            IsbnDataDto isbnDataDto = getIsbnDbData(isbn13);
+    public IsbnDataDto getConsolidatedData(ImportBookDataDto importBookDataDto) {
 
-            IsbnDataDto openLibIsbnData = getOpenLibData(isbn13);
-            if(isbnDataDto !=null && openLibIsbnData != null) {
-                consolidatedIsbnDataDto = isbnDataDto;
-                consolidatedIsbnDataDto.setGoodreadsId(openLibIsbnData.getGoodreadsId());
-                consolidatedIsbnDataDto.setLccn(openLibIsbnData.getLccn());
-                consolidatedIsbnDataDto.setLibraryThingId(openLibIsbnData.getLibraryThingId());
-                consolidatedIsbnDataDto.setIsbn_10(openLibIsbnData.getIsbn_10());
-                consolidatedIsbnDataDto.setOpenlibUrl(openLibIsbnData.getOpenlibUrl());
-                consolidatedIsbnDataDto.setOpenlibNotes(openLibIsbnData.getOpenlibNotes());
 
-            } else if(isbnDataDto ==null && openLibIsbnData == null) {
-                // do nothing
-                consolidatedIsbnDataDto = new IsbnDataDto();// empty object
 
-                System.out.println("data not found in isbn db for " + isbn13);
-            } else if(isbnDataDto == null ) {
-                consolidatedIsbnDataDto = openLibIsbnData;
-                System.out.println("data not found in isbn db for " + isbn13);
-            } else if(openLibIsbnData == null) {
-                consolidatedIsbnDataDto = isbnDataDto;
+        IsbnDataDto consolidatedIsbnDataDto = new IsbnDataDto();
+
+
+        if(importBookDataDto.getIsbn13() != 0) {  // if the book has an isbn
+
+            if (isbnDataMap.get(String.valueOf(importBookDataDto.getIsbn13())) == null) { // if it has not been fetched before
+                IsbnDataDto isbnDataDto = getIsbnDbData(importBookDataDto.getIsbn13());
+
+                IsbnDataDto openLibIsbnData = getOpenLibData(importBookDataDto.getIsbn13());
+                if (isbnDataDto != null && openLibIsbnData != null) {
+                    consolidatedIsbnDataDto = isbnDataDto;
+                    consolidatedIsbnDataDto.setGoodreadsId(openLibIsbnData.getGoodreadsId());
+                    consolidatedIsbnDataDto.setLccn(openLibIsbnData.getLccn());
+                    consolidatedIsbnDataDto.setLibraryThingId(openLibIsbnData.getLibraryThingId());
+                    consolidatedIsbnDataDto.setIsbn_10(openLibIsbnData.getIsbn_10());
+                    consolidatedIsbnDataDto.setOpenlibUrl(openLibIsbnData.getOpenlibUrl());
+                    consolidatedIsbnDataDto.setOpenlibNotes(openLibIsbnData.getOpenlibNotes());
+
+                } else if (isbnDataDto == null && openLibIsbnData == null) {
+                    // do nothing
+                    consolidatedIsbnDataDto = new IsbnDataDto();// empty object
+
+                    System.out.println("data not found in isbn db for " + importBookDataDto.getIsbn13());
+                } else if (isbnDataDto == null) {
+                    consolidatedIsbnDataDto = openLibIsbnData;
+                    System.out.println("data not found in isbn db for " + importBookDataDto.getIsbn13());
+                } else if (openLibIsbnData == null) {
+                    consolidatedIsbnDataDto = isbnDataDto;
+                }
+
+            } else {
+                consolidatedIsbnDataDto = isbnDataMap.get(String.valueOf(importBookDataDto.getIsbn13()));
             }
-            if(consolidatedIsbnDataDto != null) {
-                consolidatedIsbnDataDto.setIsbn13(isbn13);
-            }
-        } else {
-            consolidatedIsbnDataDto = isbnDataMap.get(isbn13);
+
+
         }
+        if(consolidatedIsbnDataDto.getTitle() == null || consolidatedIsbnDataDto.getTitle().equals("")) {
+            consolidatedIsbnDataDto.setTitle(importBookDataDto.getTitle());
+        }
+        if(consolidatedIsbnDataDto.getAuthors() == null || consolidatedIsbnDataDto.getAuthors().length ==0) {
+            String[] authors = new String[1];
+            authors[0] = importBookDataDto.getAuthors();
+            consolidatedIsbnDataDto.setAuthors(authors);
+        }
+
+        consolidatedIsbnDataDto.setIsbn13(String.valueOf(importBookDataDto.getIsbn13()));
+
+        consolidatedIsbnDataDto.setTitleId(importBookDataDto.getTitleId());
+        consolidatedIsbnDataDto.setBookNum(Isbn13Isbn10Converter.prepareBookNumber(importBookDataDto.getBookNum()));
+
+        consolidatedIsbnDataDto.setCategory(importBookDataDto.getCategory());
+
+        consolidatedIsbnDataDto.setAuthorsFromImport(importBookDataDto.getAuthors());
+        consolidatedIsbnDataDto.setLibLocation(importBookDataDto.getLibLocation());
+        consolidatedIsbnDataDto.setShelfLocation(importBookDataDto.getLocation());
+        consolidatedIsbnDataDto.setStatus(importBookDataDto.getStatus());
+        consolidatedIsbnDataDto.setLanguage(importBookDataDto.getLanguage());
 
 
 
@@ -187,34 +215,32 @@ public class BookDataExternalAdaptor {
     public static void main(String[] args) {
         //String isbn = "9201558025";
         //file format assumed to be Title	Title ID	ISBN	Booknumber	Category	Location	Author	Shelf Location	Times Rented	Status	Language
-        //String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
+        String isbnListFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
 
-        //String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
+        String outputFilePath = "/Users/ruchiagarwal/avidreaders/IsbnData.csv";
 
-        String isbnListFilePath = "/home/shailesh/avidreaders/catalog_report_for_migration.csv";
+        //String isbnListFilePath = "/home/shailesh/avidreaders/catalog_report_for_migration.csv";
 
-        String outputFilePath = "/home/shailesh/avidreaders/IsbnData.csv";
+//        String outputFilePath = "/home/shailesh/avidreaders/IsbnData.csv";
 
         BookDataExternalAdaptor bookDataExternalAdaptor = new BookDataExternalAdaptor();
-        IsbnListRetriever isbnListRetriever = new IsbnListRetriever();
-        Set<String> isbnSet = isbnListRetriever.retrieveIsbnsInLibrary(isbnListFilePath);
+        BookListRetriever isbnListRetriever = new BookListRetriever();
+        Set<ImportBookDataDto> isbnSet = new BookListRetriever().retrieveBooksInLibrary(isbnListFilePath);
         IsbnFileWriter isbnFileWriter = new IsbnFileWriter();
         isbnFileWriter.initialize(outputFilePath);
-        Iterator<String> iter = isbnSet.iterator();
+        Iterator<ImportBookDataDto> iter = isbnSet.iterator();
 int i=0;
         while(iter.hasNext() && i <= 1) {
 
 i++;
-            String isbn13 = iter.next();
-            IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(isbn13);
+            ImportBookDataDto importBookDataDto = iter.next();
 
-            if (isbnDataDto.getIsbn13() != null) {
+            IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
+
+            //if (isbnDataDto.getIsbn13() != null) {
                 //System.out.println("writing valid isbn data in file" + openLibData.getIsbn());
-                isbnFileWriter.writeIsbnData(isbnDataDto);
-            } else {
-                //System.out.println("writing missing data in file" + isbn);
-                isbnFileWriter.writeMissingData(isbn13);
-            }
+            isbnFileWriter.writeIsbnData(isbnDataDto);
+            //}
         }
         isbnFileWriter.closeWriting();
 

@@ -237,4 +237,94 @@ public class IsbnDataDto {
 
     @JsonProperty("reviews")
     private String[] reviews;
+
+    private String category;
+
+    private String shelfLocation;
+
+    private String libLocation;
+
+    private String bookNum;
+
+    private String language;
+
+    private long titleId;
+
+    private int timesRented;
+
+    private String status;
+
+    private String authorsFromImport;
+
+    public String getAuthorsFromImport() {
+        return authorsFromImport;
+    }
+
+    public void setAuthorsFromImport(String authorsFromImport) {
+        this.authorsFromImport = authorsFromImport;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getShelfLocation() {
+        return shelfLocation;
+    }
+
+    public void setShelfLocation(String shelfLocation) {
+        this.shelfLocation = shelfLocation;
+    }
+
+    public String getLibLocation() {
+        return libLocation;
+    }
+
+    public void setLibLocation(String libLocation) {
+        this.libLocation = libLocation;
+    }
+
+    public String getBookNum() {
+        return bookNum;
+    }
+
+    public void setBookNum(String bookNum) {
+        this.bookNum = bookNum;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public long getTitleId() {
+        return titleId;
+    }
+
+    public void setTitleId(long titleId) {
+        this.titleId = titleId;
+    }
+
+    public int getTimesRented() {
+        return timesRented;
+    }
+
+    public void setTimesRented(int timesRented) {
+        this.timesRented = timesRented;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
