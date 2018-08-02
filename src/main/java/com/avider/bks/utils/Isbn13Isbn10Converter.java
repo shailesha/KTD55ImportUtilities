@@ -112,10 +112,13 @@ public class Isbn13Isbn10Converter {
     public static String makeCsvLine(String[] stringsInSeq) {
         String csvLine = "";
         for(String data: stringsInSeq) {
+            System.out.println(data);
             if(data != null) {
                 csvLine = csvLine + "\"" + data.replaceAll(":::", ",") + "\"" + ",";
                 csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
-            } else {
+                System.out.println(csvLine);
+            }
+            else {
                 csvLine = csvLine + "\"" +  "\"" + ",";
             }
         }

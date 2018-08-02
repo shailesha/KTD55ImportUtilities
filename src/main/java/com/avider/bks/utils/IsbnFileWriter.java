@@ -63,9 +63,13 @@ public class IsbnFileWriter {
             lineToBeWritten[17] = isdnDataDto.getPublishDate() ;
             lineToBeWritten[18] = isdnDataDto.getCategory() ;
             lineToBeWritten[19] = convertListToString(isdnDataDto.getSubjectNames()) ;
-            lineToBeWritten[20] = String.valueOf(isdnDataDto.getTimesRented()) ;
+            if(isdnDataDto.getTimesRented() != 0) {
+                lineToBeWritten[20] = String.valueOf(isdnDataDto.getTimesRented());
+            }
             lineToBeWritten[21] = isdnDataDto.getStatus() ;
-            lineToBeWritten[22] = String.valueOf(isdnDataDto.getNumPages()) ;
+            if(isdnDataDto.getNumPages() != 0) {
+                lineToBeWritten[22] = String.valueOf(isdnDataDto.getNumPages());
+            }
             lineToBeWritten[23] = convertListToString(isdnDataDto.getReviews()) ;
             lineToBeWritten[24] = isdnDataDto.getCoverImgUrl() ;
             lineToBeWritten[25] = isdnDataDto.getOpenlibUrl() ;

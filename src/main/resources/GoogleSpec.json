@@ -1,0 +1,30 @@
+[
+{
+  "operation": "shift",
+  "spec": {
+    "items[0]": {
+    "book": {
+      "publisher": "publisher",
+      "publishedDate": "publishDate",
+      
+      "volumeInfo": {
+        "authors": "authors",
+        "title": "title"
+      },
+      "description": "overview",
+      
+
+      "pageCount": "numPages",
+      
+      "searchInfo": {
+        "textSnippet": "excerpt"
+        
+      }
+      
+     
+      "categories": "subjectNames"
+    }
+  }
+}
+
+]

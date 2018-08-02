@@ -34,9 +34,9 @@ public class BookListRetriever {
             fileReader.readLine();
             fileReader.readLine();
             while ((recievedLine = fileReader.readLine()) != null) {
-                //System.out.println(recievedLine);
+               // System.out.println(recievedLine);
                 line = Isbn13Isbn10Converter.getEscapedCsvLine(recievedLine);
-                //System.out.println(line);
+               // System.out.println(line);
                 String[] bookContentLine = line.split(",");
 
                 if(bookContentLine.length > 5) {
