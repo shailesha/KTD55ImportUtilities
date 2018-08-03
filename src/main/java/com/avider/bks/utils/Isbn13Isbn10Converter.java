@@ -9,7 +9,7 @@ import java.util.Map;
 public class Isbn13Isbn10Converter {
 
     public static String convertFromIsbn13(String isbn13) {
-        if(isbn13.length() <13) {
+        if(isbn13 == null || isbn13.length() <13) {
             return "";
         }
 

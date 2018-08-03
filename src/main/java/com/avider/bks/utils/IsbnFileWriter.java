@@ -19,7 +19,7 @@ public class IsbnFileWriter {
             Date date = new Date();
             file = new File(outputFilePath);
             writer = new FileWriter(file,true);
-            writer.append("\n\n\n\n\n\n-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
+            writer.append("-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
             writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image\n");
         } catch(IOException ex) {
             throw new RuntimeException(ex);

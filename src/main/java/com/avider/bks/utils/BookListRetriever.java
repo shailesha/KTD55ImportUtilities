@@ -7,10 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ruchiagarwal on 7/23/18.
@@ -21,9 +18,9 @@ public class BookListRetriever {
 
 
     //file format assumed to be Title	Title ID	ISBN	Booknumber	Category	Location	Author	Shelf Location	Times Rented	Status	Language
-    public Set<ImportBookDataDto> retrieveBooksInLibrary(String isbnFilePath)
+    public List<ImportBookDataDto> retrieveBooksInLibrary(String isbnFilePath)
     {
-        Set<ImportBookDataDto> isbnSet = new HashSet(1000);
+        List<ImportBookDataDto> isbnSet = new ArrayList<>(1000);
         try {
             file = new File(isbnFilePath);
             fileReader = new BufferedReader(new FileReader(file));

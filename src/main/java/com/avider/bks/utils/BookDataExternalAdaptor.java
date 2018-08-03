@@ -307,35 +307,27 @@ public class BookDataExternalAdaptor {
 
         String outputFilePath = "/home/shailesh/avidreader/IsbnData.csv";
 
+        Set<String> alreadyCatalogedBookNums = new BuiltCatalogListRetriever().getAllBuiltCatalogBookNumbers(outputFilePath);
+
         BookDataExternalAdaptor bookDataExternalAdaptor = new BookDataExternalAdaptor();
-        BookListRetriever isbnListRetriever = new BookListRetriever();
-        Set<ImportBookDataDto> isbnSet = new BookListRetriever().retrieveBooksInLibrary(isbnListFilePath);
+
+        List<ImportBookDataDto> bookImportDtoList = new BookListRetriever().retrieveBooksInLibrary(isbnListFilePath);
         IsbnFileWriter isbnFileWriter = new IsbnFileWriter();
         isbnFileWriter.initialize(outputFilePath);
-        Iterator<ImportBookDataDto> iter = isbnSet.iterator();
-int i=0;
-        while(iter.hasNext()
+        Iterator<ImportBookDataDto> iter = bookImportDtoList.iterator();
+        int i=0;
+        while(iter.hasNext() && i <=1
                 && bookDataExternalAdaptor.currentIsbndbCnt < bookDataExternalAdaptor.MAX_ISBNDB_CNT
                 && bookDataExternalAdaptor.currentGoogleCnt < bookDataExternalAdaptor.MAX_GOOGLE_CNT) {
 
-i++;
+            i++;
             ImportBookDataDto importBookDataDto = iter.next();
-
-            IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
-
-            //bookDataExternalAdaptor.getDataFromGoogle(importBookDataDto.getIsbn13());
-            //if (isbnDataDto.getIsbn13() != null) {
-                //System.out.println("writing valid isbn data in file" + openLibData.getIsbn());
-            isbnFileWriter.writeIsbnData(isbnDataDto);
-            //}
+            if(!alreadyCatalogedBookNums.contains("\""+Isbn13Isbn10Converter.prepareBookNumber(importBookDataDto.getBookNum())+ "\"") ) {
+                IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
+                isbnFileWriter.writeIsbnData(isbnDataDto);
+            }
         }
         isbnFileWriter.closeWriting();
-
-
-
-
-
-//        System.out.println(openLibData);
 
     }
 
