@@ -212,14 +212,22 @@ public class BookDataExternalAdaptor {
 
                 }
                 if(consolidatedIsbnDataDto.getPublishDate() == null || consolidatedIsbnDataDto.getPublishers() == null || consolidatedIsbnDataDto.getSubjectNames() == null || consolidatedIsbnDataDto.getEdition() == null) {
-
-                    IsbnDataDto isbnDataDto = getIsbnDbData(importBookDataDto.getIsbn13());
-                    if(isbnDataDto == null) {
-                        isbnDataDto = new IsbnDataDto();
-                    }
+                    IsbnDataDto isbnDataDto = null;
                     IsbnDataDto openLibIsbnData = getOpenLibData(importBookDataDto.getIsbn13());
+                    if(currentIsbndbCnt >= MAX_ISBNDB_CNT && openLibIsbnData == null) {  // data not found in google, openlib and isbndb qiota is expired for today, then we should discard the entry
+                        return null;
+                    }
+
+                    if(currentIsbndbCnt < MAX_ISBNDB_CNT) {
+                        isbnDataDto = getIsbnDbData(importBookDataDto.getIsbn13());
+
+                    }
+                    // null return will be the case only when the entry needs to be discarded for a retry tomorrow and hence should not be written into output
                     if(openLibIsbnData == null) {
                         openLibIsbnData = new IsbnDataDto();
+                    }
+                    if(isbnDataDto == null) {
+                        isbnDataDto = new IsbnDataDto();
                     }
                     if(consolidatedIsbnDataDto.getPublishDate() == null ) {consolidatedIsbnDataDto.setPublishDate((isbnDataDto.getPublishDate() == null)? openLibIsbnData.getPublishDate(): isbnDataDto.getPublishDate());}
                     if(consolidatedIsbnDataDto.getPublishers() == null ) {consolidatedIsbnDataDto.setPublishers((isbnDataDto.getPublishers() == null)? openLibIsbnData.getPublishers(): isbnDataDto.getPublishers());}
@@ -316,15 +324,17 @@ public class BookDataExternalAdaptor {
         isbnFileWriter.initialize(outputFilePath);
         Iterator<ImportBookDataDto> iter = bookImportDtoList.iterator();
         int i=0;
-        while(iter.hasNext() && i <=1
-                && bookDataExternalAdaptor.currentIsbndbCnt < bookDataExternalAdaptor.MAX_ISBNDB_CNT
+        while(iter.hasNext() //&& i <=1
+               // && bookDataExternalAdaptor.currentIsbndbCnt < bookDataExternalAdaptor.MAX_ISBNDB_CNT
                 && bookDataExternalAdaptor.currentGoogleCnt < bookDataExternalAdaptor.MAX_GOOGLE_CNT) {
 
             i++;
             ImportBookDataDto importBookDataDto = iter.next();
             if(!alreadyCatalogedBookNums.contains("\""+Isbn13Isbn10Converter.prepareBookNumber(importBookDataDto.getBookNum())+ "\"") ) {
                 IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
-                isbnFileWriter.writeIsbnData(isbnDataDto);
+                if(isbnDataDto != null) {// write to output if we dont want to retry this isbn later (due t expiry of daily api quota)
+                    isbnFileWriter.writeIsbnData(isbnDataDto);
+                }
             }
         }
         isbnFileWriter.closeWriting();
