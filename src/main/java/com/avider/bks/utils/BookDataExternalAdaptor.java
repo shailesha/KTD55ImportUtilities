@@ -25,6 +25,12 @@ public class BookDataExternalAdaptor {
     private static final String googleBooksUrl = "https://www.googleapis.com/books/v1/volumes?q=";
     private Map<String,IsbnDataDto> isbnDataMap = new HashMap(1000);
 
+    public static final int MAX_GOOGLE_CNT = 1000;
+    public static final int MAX_ISBNDB_CNT = 100;
+
+    public int currentGoogleCnt = 0;
+    public int currentIsbndbCnt = 0;
+
     public  IsbnDataDto getIsbnDbData(long isbn) {
         //HashMap<String, String> returnMap = new HashMap<String, String>();
 
@@ -32,6 +38,7 @@ public class BookDataExternalAdaptor {
         IsbnDataDto isbnDataDto = null;
         try {
 
+            currentIsbndbCnt ++;
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(isbnDbUrl+isbn);
             httpGet.addHeader("Content-Type", "application/json");
@@ -135,13 +142,14 @@ public class BookDataExternalAdaptor {
 
     }
 
-    public static IsbnDataDto getDataFromGoogle(long isbn13) {
+    public  IsbnDataDto getDataFromGoogle(long isbn13) {
         System.out.println("isbn13 : " + isbn13);
 
         String isbnGoogleResult = null;
         IsbnDataDto isbnDataDto = null;
         try {
 
+            currentGoogleCnt ++;
             CloseableHttpClient httpclient = HttpClients.createDefault();
             String uri = googleBooksUrl + "isbn:" + isbn13 + "&key=" + "AIzaSyAcwS8AgUzEgD48HUtOmjsB2wOKdZVPZos";
             HttpGet httpGet = new HttpGet(uri);
@@ -150,6 +158,7 @@ public class BookDataExternalAdaptor {
             CloseableHttpResponse response1 = httpclient.execute(httpGet);
             isbnGoogleResult = EntityUtils.toString(response1.getEntity());
             System.out.println("isbnGoogleResult : " + isbnGoogleResult);
+
 
 
             // ObjectMapper mapper = new ObjectMapper()
@@ -302,7 +311,9 @@ public class BookDataExternalAdaptor {
         isbnFileWriter.initialize(outputFilePath);
         Iterator<ImportBookDataDto> iter = isbnSet.iterator();
 int i=0;
-        while(iter.hasNext() && i<=1) {
+        while(iter.hasNext()
+                && bookDataExternalAdaptor.currentIsbndbCnt < bookDataExternalAdaptor.MAX_ISBNDB_CNT
+                && bookDataExternalAdaptor.currentGoogleCnt < bookDataExternalAdaptor.MAX_GOOGLE_CNT) {
 
 i++;
             ImportBookDataDto importBookDataDto = iter.next();
