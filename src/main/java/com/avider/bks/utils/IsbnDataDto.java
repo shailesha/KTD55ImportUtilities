@@ -216,7 +216,7 @@ public class IsbnDataDto {
     @JsonProperty("goodreadsId")
     private String goodreadsId;
 
-    @JsonProperty("publishers")
+    @JsonProperty("publisher")
     private String publishers;
 
     @JsonProperty("Overview")

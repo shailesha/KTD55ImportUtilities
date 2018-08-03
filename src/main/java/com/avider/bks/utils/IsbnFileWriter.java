@@ -20,7 +20,7 @@ public class IsbnFileWriter {
             file = new File(outputFilePath);
             writer = new FileWriter(file,true);
             writer.append("\n\n\n\n\n\n-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
-            writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image, Openlib URL, good reads id, Lccn, library thing id\n");
+            writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image\n");
         } catch(IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -40,7 +40,7 @@ public class IsbnFileWriter {
 
         //book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image, Openlib URL, good reads id, Lccn, library thing id
 
-        String[] lineToBeWritten = new String [29];
+        String[] lineToBeWritten = new String [25];
         try {
             System.out.println("isbn = " + isdnDataDto.getIsbn13());
             lineToBeWritten[0] = isdnDataDto.getBookNum();
@@ -72,10 +72,10 @@ public class IsbnFileWriter {
             }
             lineToBeWritten[23] = convertListToString(isdnDataDto.getReviews()) ;
             lineToBeWritten[24] = isdnDataDto.getCoverImgUrl() ;
-            lineToBeWritten[25] = isdnDataDto.getOpenlibUrl() ;
-            lineToBeWritten[26] = isdnDataDto.getGoodreadsId() ;
-            lineToBeWritten[27] = isdnDataDto.getLccn() ;
-            lineToBeWritten[28] = isdnDataDto.getLibraryThingId() ;
+            //lineToBeWritten[25] = isdnDataDto.getOpenlibUrl() ;
+            //lineToBeWritten[26] = isdnDataDto.getGoodreadsId() ;
+            //lineToBeWritten[27] = isdnDataDto.getLccn() ;
+            //lineToBeWritten[28] = isdnDataDto.getLibraryThingId() ;
 
             writer.append(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
             /*writer.append(isdnDataDto.getIsbn_10() + ",");

@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class Isbn13Isbn10Converter {
 
-    public String convertFromIsbn13(String isbn13) {
+    public static String convertFromIsbn13(String isbn13) {
 
         System.out.println(isbn13);
         char[] isbn13Chars = isbn13.toCharArray();
@@ -112,11 +112,18 @@ public class Isbn13Isbn10Converter {
     public static String makeCsvLine(String[] stringsInSeq) {
         String csvLine = "";
         for(String data: stringsInSeq) {
-            System.out.println(data);
+            //System.out.println(data);
             if(data != null) {
-                csvLine = csvLine + "\"" + data.replaceAll(":::", ",") + "\"" + ",";
+                if(!data.startsWith("\"") && !data.endsWith("\"")) {
+                    csvLine = csvLine + "\"" + data + "\"" + "," ;
+                } else {
+                    csvLine = csvLine + data + "," ;
+                }
+                if(data.indexOf(":::") != -1) {
+                    csvLine = csvLine + data.replaceAll(":::", ",") + ",";
+                }
                 csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
-                System.out.println(csvLine);
+              //  System.out.println(csvLine);
             }
             else {
                 csvLine = csvLine + "\"" +  "\"" + ",";

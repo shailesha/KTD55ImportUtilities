@@ -13,7 +13,7 @@
         "publish_date": "publishDate",
         "authors": "authors",
         "overview": "Overview",
-        "isbn13": "isbn",
+        "isbn13": "ISBN",
         "edition": "edition",
         "dewey_decimal":"dewey_decimal",
         "excerpt":"excerpt",

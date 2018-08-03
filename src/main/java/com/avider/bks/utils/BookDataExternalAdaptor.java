@@ -198,10 +198,11 @@ public class BookDataExternalAdaptor {
 
                 IsbnDataDto googleBookDto = getDataFromGoogle(importBookDataDto.getIsbn13());
                 if(googleBookDto != null ) {
+                    System.out.println("google data found for isbn");
                     consolidatedIsbnDataDto = googleBookDto;
 
                 }
-                if(consolidatedIsbnDataDto.getPublishDate() == null || consolidatedIsbnDataDto.getPublishers() == null || consolidatedIsbnDataDto.getSubjectNames() == null) {
+                if(consolidatedIsbnDataDto.getPublishDate() == null || consolidatedIsbnDataDto.getPublishers() == null || consolidatedIsbnDataDto.getSubjectNames() == null || consolidatedIsbnDataDto.getEdition() == null) {
 
                     IsbnDataDto isbnDataDto = getIsbnDbData(importBookDataDto.getIsbn13());
                     if(isbnDataDto == null) {
@@ -247,7 +248,7 @@ public class BookDataExternalAdaptor {
         }
 
         consolidatedIsbnDataDto.setIsbn13(String.valueOf(importBookDataDto.getIsbn13()));
-
+        if(consolidatedIsbnDataDto.getIsbn_10() == null ) {consolidatedIsbnDataDto.setIsbn_10(Isbn13Isbn10Converter.convertFromIsbn13(consolidatedIsbnDataDto.getIsbn13()));}
         consolidatedIsbnDataDto.setTitleId(importBookDataDto.getTitleId());
         consolidatedIsbnDataDto.setBookNum(Isbn13Isbn10Converter.prepareBookNumber(importBookDataDto.getBookNum()));
 
@@ -263,6 +264,7 @@ public class BookDataExternalAdaptor {
             consolidatedIsbnDataDto.setStatus("A");
         }
         consolidatedIsbnDataDto.setLanguage(importBookDataDto.getLanguage());
+        if(consolidatedIsbnDataDto.getSubtitle() == null) { consolidatedIsbnDataDto.setSubtitle(consolidatedIsbnDataDto.getTitle());}
 
 
 
@@ -300,17 +302,17 @@ public class BookDataExternalAdaptor {
         isbnFileWriter.initialize(outputFilePath);
         Iterator<ImportBookDataDto> iter = isbnSet.iterator();
 int i=0;
-        while(iter.hasNext() ) {
+        while(iter.hasNext() && i<=1) {
 
 i++;
             ImportBookDataDto importBookDataDto = iter.next();
 
-            //IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
+            IsbnDataDto isbnDataDto = bookDataExternalAdaptor.getConsolidatedData(importBookDataDto);
 
-            bookDataExternalAdaptor.getDataFromGoogle(importBookDataDto.getIsbn13());
+            //bookDataExternalAdaptor.getDataFromGoogle(importBookDataDto.getIsbn13());
             //if (isbnDataDto.getIsbn13() != null) {
                 //System.out.println("writing valid isbn data in file" + openLibData.getIsbn());
-            //isbnFileWriter.writeIsbnData(isbnDataDto);
+            isbnFileWriter.writeIsbnData(isbnDataDto);
             //}
         }
         isbnFileWriter.closeWriting();
