@@ -9,6 +9,9 @@ import java.util.Map;
 public class Isbn13Isbn10Converter {
 
     public static String convertFromIsbn13(String isbn13) {
+        if(isbn13.length() <13) {
+            return "";
+        }
 
         System.out.println(isbn13);
         char[] isbn13Chars = isbn13.toCharArray();

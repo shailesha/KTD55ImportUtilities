@@ -201,7 +201,7 @@ public class BookDataExternalAdaptor {
 
         System.out.println(importBookDataDto.getIsbn13());
 
-        if(importBookDataDto.getIsbn13() != 0) {  // if the book has an isbn
+        if(importBookDataDto.getIsbn13() > 1000000000 ) {  // if the book has a valid isbn
 
             if (isbnDataMap.get(String.valueOf(importBookDataDto.getIsbn13())) == null) { // if it has not been fetched before
 
@@ -233,6 +233,7 @@ public class BookDataExternalAdaptor {
                     if(consolidatedIsbnDataDto.getSubtitle() == null ) {consolidatedIsbnDataDto.setSubtitle((isbnDataDto.getSubtitle() == null)? openLibIsbnData.getSubtitle(): isbnDataDto.getSubtitle());}
                     if(consolidatedIsbnDataDto.getAuthors() == null ) {consolidatedIsbnDataDto.setAuthors((isbnDataDto.getAuthors() == null)? openLibIsbnData.getAuthors(): isbnDataDto.getAuthors());}
                     if(consolidatedIsbnDataDto.getIsbn_10() == null ) {consolidatedIsbnDataDto.setIsbn_10((isbnDataDto.getIsbn_10() == null)? openLibIsbnData.getIsbn_10(): isbnDataDto.getIsbn_10());}
+                    if(consolidatedIsbnDataDto.getIsbn13() == null ) {consolidatedIsbnDataDto.setIsbn13((isbnDataDto.getIsbn13() == null)? openLibIsbnData.getIsbn13(): isbnDataDto.getIsbn13());}
                     if(consolidatedIsbnDataDto.getOverview() == null ) {consolidatedIsbnDataDto.setOverview((isbnDataDto.getOverview() == null)? openLibIsbnData.getOverview(): isbnDataDto.getOverview());}
                     consolidatedIsbnDataDto.setExcerpt((isbnDataDto.getExcerpt() == null)? openLibIsbnData.getExcerpt(): isbnDataDto.getExcerpt());
                     consolidatedIsbnDataDto.setReviews((isbnDataDto.getReviews() == null)? openLibIsbnData.getReviews(): isbnDataDto.getReviews());
@@ -256,7 +257,9 @@ public class BookDataExternalAdaptor {
             consolidatedIsbnDataDto.setAuthors(authors);
         }
 
-        consolidatedIsbnDataDto.setIsbn13(String.valueOf(importBookDataDto.getIsbn13()));
+        if(importBookDataDto.getIsbn13() > 1000000000000L) {
+            consolidatedIsbnDataDto.setIsbn13(String.valueOf(importBookDataDto.getIsbn13()));
+        }
         if(consolidatedIsbnDataDto.getIsbn_10() == null ) {consolidatedIsbnDataDto.setIsbn_10(Isbn13Isbn10Converter.convertFromIsbn13(consolidatedIsbnDataDto.getIsbn13()));}
         consolidatedIsbnDataDto.setTitleId(importBookDataDto.getTitleId());
         consolidatedIsbnDataDto.setBookNum(Isbn13Isbn10Converter.prepareBookNumber(importBookDataDto.getBookNum()));
