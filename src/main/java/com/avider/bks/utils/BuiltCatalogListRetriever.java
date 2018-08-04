@@ -42,4 +42,31 @@ public class BuiltCatalogListRetriever {
         return bookNumSet;
 
     }
+
+    public Set<String> loadIsbnSetFromFile(String filePath) {
+
+        Set<String> isbnSet = new HashSet(1000);
+        try {
+            file = new File(filePath);
+            fileReader = new BufferedReader(new FileReader(file));
+            //String line = null;
+
+            String recievedLine = "";
+
+            while ((recievedLine = fileReader.readLine()) != null) {
+
+                String[] bookContentLine = recievedLine.split(",");
+                //if(bookContentLine[0].contains("\"B")) {
+                isbnSet.add(bookContentLine[0]);
+                //}
+
+            }
+            fileReader.close();
+
+        }catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return isbnSet;
+
+    }
 }

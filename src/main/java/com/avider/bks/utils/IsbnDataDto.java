@@ -6,6 +6,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by root on 25/7/18.
  */
 public class IsbnDataDto {
+    private String isbndbComments;
+    private String googleDataComments;
+    private String openLibComments;
+
+    public String getGoogleDataComments() {
+        return googleDataComments;
+    }
+
+    public void setGoogleDataComments(String googleDataComments) {
+        this.googleDataComments = googleDataComments;
+    }
+
+    public String getOpenLibComments() {
+        return openLibComments;
+    }
+
+    public void setOpenLibComments(String openLibComments) {
+        this.openLibComments = openLibComments;
+    }
+
+    public String getIsbndbComments() {
+        return isbndbComments;
+    }
+
+    public void setIsbndbComments(String comments) {
+        this.isbndbComments = comments;
+    }
+
     public String getIsbn13() {
         return isbn13;
     }

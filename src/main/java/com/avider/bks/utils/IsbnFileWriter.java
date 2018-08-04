@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by ruchiagarwal on 7/23/18.
@@ -20,7 +22,7 @@ public class IsbnFileWriter {
             file = new File(outputFilePath);
             writer = new FileWriter(file,true);
             writer.append("-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
-            writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image\n");
+            writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image, isbndb Comments, Google Comments, Openlib Comments \n");
         } catch(IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -36,11 +38,28 @@ public class IsbnFileWriter {
 
     }
 
+    public void writeIsbnOnlyData(Set isbnSet) {
+        try {
+
+
+            Iterator iter = isbnSet.iterator();
+            while (iter.hasNext()) {
+                writer.append(iter.next() + "\n");
+            }
+            writer.flush();
+
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
+
+
+    }
+
     public void writeIsbnData(IsbnDataDto isdnDataDto) {
 
         //book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image, Openlib URL, good reads id, Lccn, library thing id
 
-        String[] lineToBeWritten = new String [25];
+        String[] lineToBeWritten = new String [28];
         try {
             System.out.println("isbn = " + isdnDataDto.getIsbn13());
             lineToBeWritten[0] = isdnDataDto.getBookNum();
@@ -72,9 +91,9 @@ public class IsbnFileWriter {
             }
             lineToBeWritten[23] = convertListToString(isdnDataDto.getReviews()) ;
             lineToBeWritten[24] = isdnDataDto.getCoverImgUrl() ;
-            //lineToBeWritten[25] = isdnDataDto.getOpenlibUrl() ;
-            //lineToBeWritten[26] = isdnDataDto.getGoodreadsId() ;
-            //lineToBeWritten[27] = isdnDataDto.getLccn() ;
+            lineToBeWritten[25] = isdnDataDto.getIsbndbComments() ;
+            lineToBeWritten[26] = isdnDataDto.getGoogleDataComments() ;
+            lineToBeWritten[27] = isdnDataDto.getOpenLibComments() ;
             //lineToBeWritten[28] = isdnDataDto.getLibraryThingId() ;
 
             writer.append(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
@@ -98,6 +117,7 @@ public class IsbnFileWriter {
             writer.append(isdnDataDto.getGoodreadsId() + ",");
             writer.append(isdnDataDto.getLccn() + ",");
             writer.append(isdnDataDto.getLibraryThingId() + "\n");*/
+            writer.flush();
         } catch(IOException ex) {
             throw new RuntimeException(ex);
         }

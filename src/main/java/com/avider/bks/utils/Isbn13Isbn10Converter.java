@@ -13,7 +13,7 @@ public class Isbn13Isbn10Converter {
             return "";
         }
 
-        System.out.println(isbn13);
+        //System.out.println(isbn13);
         char[] isbn13Chars = isbn13.toCharArray();
         int[] isbn13Ints = new int[13];
         int[] isbn10Ints = new int[10];
@@ -45,10 +45,12 @@ public class Isbn13Isbn10Converter {
 
             }
             String isbn10 = new String(isbn10Chars);
-            System.out.println("isbn10 = " + isbn10);
+            //System.out.println("isbn10 = " + isbn10);
             return isbn10;
         } catch(Exception ex) {
+
             System.out.println("data for isbn " + isbn13 + "could not be computed");
+            ex.printStackTrace();
         }
         return null;
 
@@ -117,13 +119,14 @@ public class Isbn13Isbn10Converter {
         for(String data: stringsInSeq) {
             //System.out.println(data);
             if(data != null) {
-                if(!data.startsWith("\"") && !data.endsWith("\"")) {
+                if(!(data.startsWith("\"") && data.endsWith("\""))) {
                     csvLine = csvLine + "\"" + data + "\"" + "," ;
                 } else {
                     csvLine = csvLine + data + "," ;
                 }
+
                 if(data.indexOf(":::") != -1) {
-                    csvLine = csvLine + data.replaceAll(":::", ",") + ",";
+                    csvLine = csvLine.replaceAll(":::", ",") + ",";
                 }
                 csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
               //  System.out.println(csvLine);
