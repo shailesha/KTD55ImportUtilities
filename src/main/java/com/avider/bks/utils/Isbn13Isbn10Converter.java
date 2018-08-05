@@ -126,7 +126,7 @@ public class Isbn13Isbn10Converter {
                 }
 
                 if(data.indexOf(":::") != -1) {
-                    csvLine = csvLine.replaceAll(":::", ",") + ",";
+                    csvLine = csvLine.replaceAll(":::", ",") ;
                 }
                 csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
               //  System.out.println(csvLine);

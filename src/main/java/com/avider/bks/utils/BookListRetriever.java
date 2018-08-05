@@ -20,7 +20,7 @@ public class BookListRetriever {
     //file format assumed to be Title	Title ID	ISBN	Booknumber	Category	Location	Author	Shelf Location	Times Rented	Status	Language
     public List<ImportBookDataDto> retrieveBooksInLibrary(String isbnFilePath)
     {
-        List<ImportBookDataDto> isbnSet = new ArrayList<>(1000);
+        List<ImportBookDataDto> isbnList = new ArrayList<>(1000);
         try {
             file = new File(isbnFilePath);
             fileReader = new BufferedReader(new FileReader(file));
@@ -33,7 +33,7 @@ public class BookListRetriever {
             while ((recievedLine = fileReader.readLine()) != null) {
                // System.out.println(recievedLine);
                 line = Isbn13Isbn10Converter.getEscapedCsvLine(recievedLine);
-               // System.out.println(line);
+                System.out.println(line);
                 String[] bookContentLine = line.split(",");
 
                 if(bookContentLine.length > 5) {
@@ -60,7 +60,7 @@ public class BookListRetriever {
                     importBookDataDto.setStatus(bookContentLine[9]);
                     importBookDataDto.setLibLocation(bookContentLine[5]);
 
-                    isbnSet.add(importBookDataDto);
+                    isbnList.add(importBookDataDto);
 
 
 
@@ -71,7 +71,7 @@ public class BookListRetriever {
         }catch(IOException ex) {
             throw new RuntimeException(ex);
         }
-        return isbnSet;
+        return isbnList;
 
     }
 }

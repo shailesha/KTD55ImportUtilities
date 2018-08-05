@@ -15,6 +15,32 @@ import java.util.Set;
 public class IsbnFileWriter {
     FileWriter writer;
     File file;
+
+    public IsbnFileWriter() {}
+
+    public IsbnFileWriter(String outputFilePath) {
+        try {
+
+            file = new File(outputFilePath);
+            writer = new FileWriter(file,true);
+
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void initializeForBookNumberAppender() {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+            writer.append("-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
+            writer.append("book number, book num, isbn10, isbn13, titleid, title, language,  Authors,  location, shelf location, category, Times rented, Status \n");
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
+
     public void initialize(String outputFilePath)  {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -36,6 +62,32 @@ public class IsbnFileWriter {
             throw new RuntimeException(ex);
         }
 
+    }
+
+    public void writeBookNumAppender(ImportBookDataDto importBookDataDto) {
+        String[] lineToBeWritten = new String [13];
+        try {
+            System.out.println("isbn = " + importBookDataDto.getIsbn13());
+            lineToBeWritten[0] = importBookDataDto.getConvertedBookNum();
+            lineToBeWritten[1] = String.valueOf(importBookDataDto.getBookNum());
+            lineToBeWritten[2] = String.valueOf(importBookDataDto.getIsbn_10());
+            lineToBeWritten[3] = String.valueOf(importBookDataDto.getIsbn13());
+            lineToBeWritten[4] = String.valueOf(importBookDataDto.getTitleId());
+            lineToBeWritten[5] = importBookDataDto.getTitle();
+            lineToBeWritten[6] = importBookDataDto.getLanguage();
+            lineToBeWritten[7] = importBookDataDto.getAuthors();
+            lineToBeWritten[8] = "KTD";
+            lineToBeWritten[9] = importBookDataDto.getLocation();
+            lineToBeWritten[10] = importBookDataDto.getCategory();
+            lineToBeWritten[11] = String.valueOf(importBookDataDto.getTimesRented());
+            lineToBeWritten[12] = importBookDataDto.getStatus();
+System.out.println(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
+            writer.append(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
+
+            writer.flush();
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public void writeIsbnOnlyData(Set isbnSet) {

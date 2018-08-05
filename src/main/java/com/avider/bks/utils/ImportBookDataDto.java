@@ -7,6 +7,26 @@ public class ImportBookDataDto {
 
     private long titleId;
 
+    private String convertedBookNum;
+
+    public String getConvertedBookNum() {
+        return convertedBookNum;
+    }
+
+    public void setConvertedBookNum(String convertedBookNum) {
+        this.convertedBookNum = convertedBookNum;
+    }
+
+    private String isbn_10;
+
+    public String getIsbn_10() {
+        return isbn_10;
+    }
+
+    public void setIsbn_10(String isbn_10) {
+        this.isbn_10 = isbn_10;
+    }
+
     public long getTitleId() {
         return titleId;
     }
