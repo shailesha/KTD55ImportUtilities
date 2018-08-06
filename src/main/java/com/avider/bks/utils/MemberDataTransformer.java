@@ -26,46 +26,23 @@ public class MemberDataTransformer {
 
 
 
-                String[] memberDataLine = recievedline.split(",");
-                String line = "";
-                //replace in cell commas with semicolons
-                boolean continuation = false;
-                for(String data:memberDataLine) {
+                //String[] memberDataLine = recievedline.split(",");
+                String line = Isbn13Isbn10Converter.getEscapedCsvLine(recievedline);
 
-                    //System.out.println(":"+data+":" + data.contains("\"") );
-
-                    if(data.startsWith("\"") && !continuation) {
-
-                        line = line + data.replaceAll("\"", "");
-                        continuation = true;
-                    } else if(continuation) {
-
-                        if(data.endsWith("\"")) {
-                            //System.out.println(data.charAt(0));
-                            line = line + ";" + data.replaceAll("\"", "") + ",";
-                            continuation = false;
-                        } else {
-                            line = line + ";" + data;
-                        }
-                    } else {
-                        line = line +  data + ",";
-                    }
-
-
-                }
+                String[]  memberDataLine = line.split(",");
 
                 memberDataLine = line.split(",");
-                if(memberDataLine.length > 5) {
+                if(memberDataLine.length > 5) { //check for valid row
                     String surname ="";
                     String firstName = "";
-                    if(memberDataLine[2].isEmpty()) {
+                    if(memberDataLine[2].isEmpty()) {// if last name is empty
                         String[] names = memberDataLine[1].split(" ");
                         if (names.length >= 2) {
                             //firstName = names[0];
                             surname = names[names.length-1];
                             firstName = memberDataLine[1].substring(0,memberDataLine[1].lastIndexOf(" ") );
                         } else {
-                            surname = memberDataLine[1];
+                            surname = memberDataLine[1];//surname is mandatory in koha and hence needs to be populated.
                             firstName = "";
                         }
                     } else {
@@ -108,9 +85,10 @@ public class MemberDataTransformer {
 
                     String patronCategory = patronCategoryComputation.computePatronCategoryForAJBPlan(jbPlan,dtDateExpiry,dtDateStarted,dtDataExported,memberStatus);
 
-                    writer.append(new StringBuilder().append(card)
-                            .append(comma + surname)
-                            .append(comma + firstName)
+                    writer.append(new StringBuilder()
+                                    .append(card)
+                            .append(comma + Isbn13Isbn10Converter.removeEscapeChars(surname))
+                            .append(comma + Isbn13Isbn10Converter.removeEscapeChars(firstName))
                             .append(emptyString)
                             .append(emptyString)
                             .append(emptyString)
@@ -141,8 +119,8 @@ public class MemberDataTransformer {
                             .append(emptyString)
                             .append(emptyString)
                             .append(emptyString)
-                            .append(comma + patronCategory)
 
+                            .append(comma + patronCategory)
                             .append(comma + "'" + dateStarted + "'")
                             .append(comma + "'" + adjustedDateExpiry + "'")
                             //followed by 28 empty columns
@@ -157,9 +135,9 @@ public class MemberDataTransformer {
                             .append(emptyString)
                             .append(emptyString)
                             .append(emptyString)
+                            .append(card) // default password
                             .append(emptyString)
-                            .append(emptyString)
-                            .append(emptyString)
+                            .append(email)// user id
                             .append(emptyString)
 
                             .append(emptyString)
@@ -188,7 +166,7 @@ public class MemberDataTransformer {
                             .append(comma + securityDeposit)
                             .append(comma + ddOpted)
                             .append(comma + memberStatus)
-                            .append("\n"));
+                           .append("\n"));
 
                 }
                 writer.flush();
@@ -208,7 +186,8 @@ public class MemberDataTransformer {
         for(int i=11;i < memberDataLine.length;i++) {
             addressToReturn = addressToReturn + memberDataLine[i] + ";";
         }
-        return addressToReturn;
+        return Isbn13Isbn10Converter.removeEscapeChars(addressToReturn);
+
         /*String address2ToReturn = "";
         String address2InSrc = memberDataLine[9];
         String address3InSrc = memberDataLine[10];
@@ -265,8 +244,12 @@ public class MemberDataTransformer {
         // all 5 books plans need to be changed to 6 books plan
         // Delee the rows with interbranch transfer plan
         // first row will contain the header. second row onwards is ther data
-        String memberExportFilePath="/Users/ruchiagarwal/avidreaders/May5MemberData_for_migration.csv";
-        String outputFilePath ="/Users/ruchiagarwal/avidreaders/patron_test_import.csv";
+       // String memberExportFilePath="/Users/ruchiagarwal/avidreaders/May5MemberData_for_migration.csv";
+       // String outputFilePath ="/Users/ruchiagarwal/avidreaders/patron_test_import.csv";
+
+        String memberExportFilePath="/home/shailesh/avidreader/May5MemberData_for_migration.csv";
+        String outputFilePath ="/home/shailesh/avidreader/patron_test_import.csv";
+
         LocalDate dateOfExport = LocalDate.of(2018,5,5);
 
         new MemberDataTransformer().transformFile(memberExportFilePath,outputFilePath,dateOfExport);

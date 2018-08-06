@@ -128,7 +128,7 @@ public class Isbn13Isbn10Converter {
                 if(data.indexOf(":::") != -1) {
                     csvLine = csvLine.replaceAll(":::", ",") ;
                 }
-                csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
+                csvLine = csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
               //  System.out.println(csvLine);
             }
             else {
@@ -138,6 +138,13 @@ public class Isbn13Isbn10Converter {
         csvLine = csvLine + "\n";
         return csvLine;
 
+    }
+
+    public static String removeEscapeChars(String str) {
+        str = str.replaceAll(":::", ",") ;
+        str = str.replaceAll("\\r", "").replaceAll("\\n", "");
+        str = "\"" + str + "\"";
+        return str;
     }
 
     public static void main(String[] args) {
