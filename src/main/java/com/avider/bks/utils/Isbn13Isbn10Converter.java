@@ -117,23 +117,20 @@ public class Isbn13Isbn10Converter {
     public static String makeCsvLine(String[] stringsInSeq) {
         String csvLine = "";
         for(String data: stringsInSeq) {
+            data = encloseWithQuotes(data);
             //System.out.println(data);
-            if(data != null) {
-                if(!(data.startsWith("\"") && data.endsWith("\""))) {
-                    csvLine = csvLine + "\"" + data + "\"" + "," ;
-                } else {
-                    csvLine = csvLine + data + "," ;
-                }
+            //if(data != null) {
 
-                if(data.indexOf(":::") != -1) {
-                    csvLine = csvLine.replaceAll(":::", ",") ;
-                }
+
+                csvLine = csvLine + data + "," ;
+
+
+                //if(data.indexOf(":::") != -1) {
+                csvLine = csvLine.replaceAll(":::", ",") ;
+                //}
                 csvLine = csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
               //  System.out.println(csvLine);
-            }
-            else {
-                csvLine = csvLine + "\"" +  "\"" + ",";
-            }
+
         }
         csvLine = csvLine + "\n";
         return csvLine;
@@ -143,8 +140,57 @@ public class Isbn13Isbn10Converter {
     public static String removeEscapeChars(String str) {
         str = str.replaceAll(":::", ",") ;
         str = str.replaceAll("\\r", "").replaceAll("\\n", "");
-        str = "\"" + str + "\"";
+        str = encloseWithQuotes(str);
+
         return str;
+    }
+
+    public static String stripQuotes(String str) {
+        if(str.equals("\"\"") || str.equals("\"")) {
+            return "";
+        }
+        if(str.startsWith("\"")) {
+            str = str.substring(1);
+        }
+        if(str.startsWith("\"")) { // to take care of repeated quotes
+            str = str.substring(1);
+        }
+        if(str.endsWith("\"")) {
+            str = str.substring(0, str.length()-1);
+        }
+        if(str.endsWith("\"")) {  // to take care of repeated quotes
+            str = str.substring(0, str.length()-1);
+        }
+        return str;
+
+    }
+
+    public static String removeAllQuotes(String str) {
+        str = stripQuotes(str);
+
+        if(str.equals("\"\"") || str.equals("\"")) {
+            return "";
+        }
+        if(str.contains("\"")) {
+            str = str.replaceAll("\"", ";");
+        }
+
+        return str;
+
+}
+
+    public static String encloseWithQuotes(String str) {
+        if(str == null || str.equals("") || str.equals("\"\"") || str.equals("\"")) {
+            return "";
+        }
+        if(!str.startsWith("\"")) {
+            str = "\"" + str;
+        }
+        if(!str.endsWith("\"")) {
+            str = str + "\"";
+        }
+        return str;
+
     }
 
     public static void main(String[] args) {

@@ -62,17 +62,17 @@ public class MemberDataTransformer {
                     String dateExpiry =  memberDataLine[7];
                     System.out.println("datexpiry " + dateExpiry);
                     String[] dateExpArr = dateExpiry.split("/");
-                    LocalDate dtDateExpiry = LocalDate.of(Integer.parseInt(dateExpArr[2]),Integer.parseInt(dateExpArr[0]),Integer.parseInt(dateExpArr[1]));
+                    LocalDate dtDateExpiry = LocalDate.of(Integer.parseInt(dateExpArr[2])+2000,Integer.parseInt(dateExpArr[0]),Integer.parseInt(dateExpArr[1]));
 
                     LocalDate adjustedExpiry = dtDateExpiry.minusDays(1);
-                    String adjustedDateExpiry = adjustedExpiry.format(DateTimeFormatter.ofPattern("LL/dd/uuuu"));
+                    String adjustedDateExpiry = adjustedExpiry.format(DateTimeFormatter.ofPattern("LL/dd/yyyy"));
                     String dateStarted =  memberDataLine[10];
 
                     //System.out.println("memberdataline" + line);
                     //System.out.println("datexpiry" + dateStarted);
                     String[] dateStartedArr = dateStarted.split("/");
-                    LocalDate dtDateStarted = LocalDate.of(Integer.parseInt(dateStartedArr[2]),Integer.parseInt(dateStartedArr[0]),Integer.parseInt(dateStartedArr[1]));
-                    dateStarted = dtDateStarted.format(DateTimeFormatter.ofPattern("LL/dd/uuuu"));
+                    LocalDate dtDateStarted = LocalDate.of(Integer.parseInt(dateStartedArr[2])+2000,Integer.parseInt(dateStartedArr[0]),Integer.parseInt(dateStartedArr[1]));
+                    dateStarted = dtDateStarted.format(DateTimeFormatter.ofPattern("LL/dd/yyyy"));
 
 
                     String updatedOn = "";
@@ -135,12 +135,13 @@ public class MemberDataTransformer {
                             .append(emptyString)
                             .append(emptyString)
                             .append(emptyString)
-                            .append(card) // default password
                             .append(emptyString)
-                            .append(email)// user id
+                            .append(comma + card) // default password
+                            .append(emptyString)
+                            .append(comma + email)// user id
                             .append(emptyString)
 
-                            .append(emptyString)
+
                             .append(emptyString)
                             .append(emptyString)
                             .append(emptyString)
@@ -184,7 +185,13 @@ public class MemberDataTransformer {
 
         String addressToReturn = "";
         for(int i=11;i < memberDataLine.length;i++) {
-            addressToReturn = addressToReturn + memberDataLine[i] + ";";
+            if(memberDataLine != null && !memberDataLine[i].trim().equals("")) {
+                if (!addressToReturn.equals("")) {
+                    addressToReturn = addressToReturn + ",";
+                }
+
+                addressToReturn = addressToReturn + Isbn13Isbn10Converter.removeAllQuotes(memberDataLine[i]);
+            }
         }
         return Isbn13Isbn10Converter.removeEscapeChars(addressToReturn);
 
@@ -244,11 +251,11 @@ public class MemberDataTransformer {
         // all 5 books plans need to be changed to 6 books plan
         // Delee the rows with interbranch transfer plan
         // first row will contain the header. second row onwards is ther data
-       // String memberExportFilePath="/Users/ruchiagarwal/avidreaders/May5MemberData_for_migration.csv";
-       // String outputFilePath ="/Users/ruchiagarwal/avidreaders/patron_test_import.csv";
+        String memberExportFilePath="/Users/ruchiagarwal/avidreaders/May5MemberData_for_migration.csv";
+        String outputFilePath ="/Users/ruchiagarwal/avidreaders/patron_test_import.csv";
 
-        String memberExportFilePath="/home/shailesh/avidreader/May5MemberData_for_migration.csv";
-        String outputFilePath ="/home/shailesh/avidreader/patron_test_import.csv";
+       // String memberExportFilePath="/home/shailesh/avidreader/May5MemberData_for_migration.csv";
+        //String outputFilePath ="/home/shailesh/avidreader/patron_test_import.csv";
 
         LocalDate dateOfExport = LocalDate.of(2018,5,5);
 
