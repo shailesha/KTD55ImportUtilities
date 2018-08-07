@@ -29,6 +29,17 @@ public class IsbnFileWriter {
         }
     }
 
+    public void initialize() {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+            writer.append("-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
+
     public void initializeForBookNumberAppender() {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -41,12 +52,12 @@ public class IsbnFileWriter {
 
     }
 
-    public void initialize(String outputFilePath)  {
+    public void initializeForEnrichedBookFormat()  {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
-            file = new File(outputFilePath);
-            writer = new FileWriter(file,true);
+            //file = new File(outputFilePath);
+            //writer = new FileWriter(file,true);
             writer.append("-------,-----------,next run,---------,Date & Time," + formatter.format(date) +",-------------\n");
             writer.append("book number, isbn13, isbn_10, titleid, title, subtitle,language, edition, Dewey_decimal, Authors, Publishers, location, shelf location, Overview,Synopsys, excerpt, Notes, Publish Date,category, subjects, Times rented, Status, Num Pages,Reviews, cover image, isbndb Comments, Google Comments, Openlib Comments \n");
         } catch(IOException ex) {
@@ -178,6 +189,27 @@ System.out.println(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
 
 
     }
+
+
+    public void writeCirculationData(String[] circulationData) {
+
+        //datetime, action, book num, crd no
+
+        String[] lineToBeWritten = new String [3];
+        try {
+
+            writer.append(Isbn13Isbn10Converter.makeCsvLine(circulationData));
+
+            writer.flush();
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+
+
+
+    }
+
 
     public void closeWriting() {
         try {

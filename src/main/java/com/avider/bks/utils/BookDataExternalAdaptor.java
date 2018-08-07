@@ -404,13 +404,13 @@ public class BookDataExternalAdaptor {
 
         BookDataExternalAdaptor bookDataExternalAdaptor = new BookDataExternalAdaptor();
         IsbnFileWriter isbnFileWriter = new IsbnFileWriter();
-        isbnFileWriter.initialize(outputFilePath);
+        isbnFileWriter.initializeForEnrichedBookFormat();
 
         IsbnFileWriter noGoogleIsbnFileWriter = new IsbnFileWriter();
-        noGoogleIsbnFileWriter.initialize(noGoogleSetPath);
+        noGoogleIsbnFileWriter.initialize();
 
         IsbnFileWriter noIsbndbIsbnFileWriter = new IsbnFileWriter();
-        noIsbndbIsbnFileWriter.initialize(noIsbnDbSetPath);
+        noIsbndbIsbnFileWriter.initialize();
 
         bookDataExternalAdaptor.currentGoogleCnt = 691;
         bookDataExternalAdaptor.currentIsbndbCnt = 1600;
