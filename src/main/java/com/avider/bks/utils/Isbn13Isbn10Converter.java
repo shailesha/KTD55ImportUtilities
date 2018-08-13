@@ -137,6 +137,29 @@ public class Isbn13Isbn10Converter {
 
     }
 
+    public static String makeTabSeparatedLine(String[] stringsInSeq) {
+        String csvLine = "";
+        for(String data: stringsInSeq) {
+            //data = encloseWithQuotes(data);
+            //System.out.println(data);
+            //if(data != null) {
+
+
+            csvLine = csvLine + data + "\t" ;
+
+
+            //if(data.indexOf(":::") != -1) {
+            csvLine = csvLine.replaceAll(":::", "\t") ;
+            //}
+            csvLine = csvLine.replaceAll("\\r", "").replaceAll("\\n", "");
+            //  System.out.println(csvLine);
+
+        }
+        csvLine = csvLine + "\n";
+        return csvLine;
+
+    }
+
     public static String removeEscapeChars(String str) {
         str = str.replaceAll(":::", ",") ;
         str = str.replaceAll("\\r", "").replaceAll("\\n", "");

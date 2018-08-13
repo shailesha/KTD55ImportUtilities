@@ -22,6 +22,7 @@ public class IsbnFileWriter {
         try {
 
             file = new File(outputFilePath);
+            file.createNewFile();
             writer = new FileWriter(file,true);
 
         } catch(IOException ex) {
@@ -195,10 +196,23 @@ System.out.println(Isbn13Isbn10Converter.makeCsvLine(lineToBeWritten));
 
         //datetime, action, book num, crd no
 
-        String[] lineToBeWritten = new String [3];
+        String[] lineToBeWritten = new String [5];
+        lineToBeWritten[0] = circulationData[0];
+        lineToBeWritten[1] = circulationData[1];
+        lineToBeWritten[2] = circulationData[2];
+        if(circulationData.length >= 4) {
+            lineToBeWritten[3] = circulationData[3];
+        } else {
+            lineToBeWritten[3] = "";
+        }
+        if(circulationData.length >= 5){
+            lineToBeWritten[4] = circulationData[4];
+        } else {
+            lineToBeWritten[4] = "";
+        }
         try {
 
-            writer.append(Isbn13Isbn10Converter.makeCsvLine(circulationData));
+            writer.append(Isbn13Isbn10Converter.makeTabSeparatedLine(lineToBeWritten));
 
             writer.flush();
         } catch(IOException ex) {

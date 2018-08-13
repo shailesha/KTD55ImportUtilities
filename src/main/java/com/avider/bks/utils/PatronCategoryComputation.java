@@ -91,15 +91,16 @@ public class PatronCategoryComputation {
     }
 //logic of dormant needs to be applied
     public String computePatronCategoryForAJBPlan(String JBPlan, LocalDate dateExpiry, LocalDate startDate, LocalDate memberDataExportDate, String memberStatus) {
+
+        String patronCategory = (String)planToCategoryMap.get(JBPlan.toUpperCase());
+        return patronCategory;
+
+
+        //dont compute the months - actual plan
+
+/*
         int numOfMonths =1;  //default
-        //int membershipPeriodInMonths = monthsDifference(startDate,dateExpiry);
-        //System.out.println("totalMemberShipDuration in months " + membershipPeriodInMonths);
-        //LocalDate memberDataExportDate = LocalDate.of(2018, Month.MAY,5);
-        //Period expiryFromExport = Period.between(memberDataExportDate, dateExpiry);
 
-
-
-        //long expiryDaysFromExport = expiryFromExport.getDays();
         long expiryDaysFromExport = ChronoUnit.DAYS.between(memberDataExportDate, dateExpiry);
         //System.out.println("expiryDaysFromExport " + expiryDaysFromExport);
 
@@ -109,7 +110,6 @@ public class PatronCategoryComputation {
         long membershipPeriodInMonths = expiryFromStart.getMonths();
 //        System.out.println("totalMemberShipDuration in months new " + membershipPeriodInMonths);
 
-        //Period sinceStart = Period.between(startDate, memberDataExportDate);
         long periodElapsedSoFar = ChronoUnit.DAYS.between(startDate, memberDataExportDate);
 
         if(totalMemberShipDuration <60) {
@@ -152,14 +152,13 @@ public class PatronCategoryComputation {
 
         String computedPatronCategory = "";
         System.out.println(JBPlan);
-        String patronCategory = (String)planToCategoryMap.get(JBPlan.toUpperCase());
 
         if(!patronCategory.equals("WV1")) {
             computedPatronCategory = patronCategory + numOfMonths;
         } else {
             computedPatronCategory = patronCategory;
         }
-        return computedPatronCategory;
+        return computedPatronCategory;*/
 
     }
 

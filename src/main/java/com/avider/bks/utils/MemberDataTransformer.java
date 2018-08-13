@@ -251,7 +251,7 @@ public class MemberDataTransformer {
         // all 5 books plans need to be changed to 6 books plan
         // Delee the rows with interbranch transfer plan
         // first row will contain the header. second row onwards is ther data
-        String memberExportFilePath="/Users/ruchiagarwal/avidreaders/May5MemberData_for_migration.csv";
+        String memberExportFilePath="/Users/ruchiagarwal/avidreaders/MEMBER LIST of 20 Jun - Prepared on 11 Aug.csv";
         String outputFilePath ="/Users/ruchiagarwal/avidreaders/patron_test_import.csv";
 
        // String memberExportFilePath="/home/shailesh/avidreader/May5MemberData_for_migration.csv";

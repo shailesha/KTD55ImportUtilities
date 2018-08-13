@@ -17,8 +17,8 @@ public class BookNumberTransformerForOfflineCirculationData {
 
     public static void main(String[] args) {
 
-        String circulationInputFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration.csv";
-        String circulationOutputFilePath = "/Users/ruchiagarwal/avidreaders/catalog_report_for_migration_withBooknum.csv";
+        String circulationInputFilePath = "/Users/ruchiagarwal/avidreaders/Workbook24.csv";
+        String circulationOutputFilePath = "/Users/ruchiagarwal/avidreaders/circulation with booknum.koc";
 
         IsbnFileWriter fileWriter = null;
         File file = null;
@@ -33,13 +33,13 @@ public class BookNumberTransformerForOfflineCirculationData {
             String line = null;
 
             String recievedLine = "";
-            fileReader.readLine();
+            //fileReader.readLine();
 
             while ((recievedLine = fileReader.readLine()) != null) {
                 String[] circulationLine = recievedLine.split(",");
                 //if(circulationLine[2] != null && !circulationLine[2].equals("")) {
-                    String bookNum = Isbn13Isbn10Converter.prepareBookNumber(Long.parseLong(circulationLine[2]));
-                    circulationLine[2] = bookNum;
+                    //String bookNum = Isbn13Isbn10Converter.prepareBookNumber(Long.parseLong(circulationLine[2]));
+                    //circulationLine[2] = bookNum;
                 //}
                 fileWriter.writeCirculationData(circulationLine);
 
