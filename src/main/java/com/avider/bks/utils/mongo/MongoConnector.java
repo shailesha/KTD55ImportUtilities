@@ -2,6 +2,7 @@ package com.avider.bks.utils.mongo;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 /**
  * Created by root on 16/8/18.
@@ -12,7 +13,9 @@ public class MongoConnector {
         DB mongoDb = null;
 
         try {
-            MongoClient mongoClient = new MongoClient("mongodb://aviduser:pwd2610@ds033607.mlab.com:33607/ct_party_db");
+            //mongodb://<dbuser>:<dbpassword>@ds121382.mlab.com:21382/avidreaders
+            MongoClientURI mongoClientURI = new MongoClientURI("mongodb://aviduser1:aviduser1@ds121382.mlab.com:21382/avidreaders");
+            MongoClient mongoClient = new MongoClient(mongoClientURI);
 
             mongoDb = mongoClient.getDB("avidreaders");
 

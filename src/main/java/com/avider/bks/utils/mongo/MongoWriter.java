@@ -14,7 +14,7 @@ public class MongoWriter {
     public static final String GOOGLE = "GOOGLE";
     public static final String ISBNDB = "ISBNDB";
 
-    public void writeMissedIsbns(Set<String> isbnSet, String bookApiName) {
+    public static void writeMissedIsbns(Set<String> isbnSet, String bookApiName) {
         if(!isbnSet.isEmpty() && (bookApiName != null && (bookApiName.equals(GOOGLE) || bookApiName.equals(ISBNDB)))) {
             DB avidRdrDb = MongoConnector.connect();
             DBCollection booksMissSet = null;
@@ -37,7 +37,7 @@ public class MongoWriter {
     }
 
 
-    public Set<String> retrieveMissedIsbns(String bookApiName) {
+    public static Set<String> retrieveMissedIsbns(String bookApiName) {
        // if(!isbnSet.isEmpty()) {
         Set<String> isbnSet = new HashSet<>();
         if(bookApiName != null && (bookApiName.equals(GOOGLE) || bookApiName.equals(ISBNDB))) {
@@ -66,7 +66,10 @@ public class MongoWriter {
     }
 
 
+public static void main(String[] args) {
 
+        retrieveMissedIsbns("GOOGLE");
+}
 
 
 }
