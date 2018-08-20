@@ -9,6 +9,17 @@ public class ImportBookDataDto {
 
     private String convertedBookNum;
 
+    public String getBookType() {
+        return bookType;
+    }
+
+    public void setBookType(String bookType) {
+        this.bookType = bookType;
+    }
+
+    //BK or CR
+    private String bookType;
+
     public String getConvertedBookNum() {
         return convertedBookNum;
     }

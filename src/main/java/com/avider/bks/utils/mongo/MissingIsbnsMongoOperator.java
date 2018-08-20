@@ -8,9 +8,11 @@ import java.util.Set;
 
 /**
  * Created by root on 16/8/18.
+ *
+ * This class is to track the isbns which were not found in IsbnDB or in Google Books
  */
 
-public class MongoWriter {
+public class MissingIsbnsMongoOperator {
     public static final String GOOGLE = "GOOGLE";
     public static final String ISBNDB = "ISBNDB";
 
